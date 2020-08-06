@@ -1,0 +1,10 @@
+{
+  "name": "joystick-mouse-control",
+  "version": "1.0.0",
+  "description": "Let's you control your mouse cursor with a joystick",
+  "main": "index.js",
+  "repository": "https://github.com/git-git-git-got-got-got/joystick-mouse-control",
+  "author": "Leeous",
+  "license": "GNU General Public License v3.0",
+  "private": true
+}
