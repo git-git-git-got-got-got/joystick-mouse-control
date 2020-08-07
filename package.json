@@ -1,20 +1,44 @@
 {
   "name": "joystick-mouse-control",
   "version": "1.0.0",
-  "description": "Let's you control your mouse cursor with a joystick",
+  "description": "Lets you control your mouse cursor with a joystick",
   "main": "main.js",
   "repository": "https://github.com/git-git-git-got-got-got/joystick-mouse-control",
   "author": "Leeous",
   "license": "GNU General Public License v3.0",
   "private": true,
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder -w"
   },
   "dependencies": {
     "gamepad-api": "^1.0.1",
     "robotjs": "^0.6.0"
   },
   "devDependencies": {
-    "electron": "^9.1.2"
+    "electron": "^9.1.2",
+    "electron-builder": "^22.8.0"
+  },
+  "build": {
+    "appId": "com.joystickmousecontrol.app",
+    "productName": "Joystick Mouse Control",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    }
   }
 }
