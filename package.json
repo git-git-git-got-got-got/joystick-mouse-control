@@ -1,5 +1,6 @@
 {
   "name": "joystick-mouse-control",
+  "displayName": "Joystick Mouse Control",
   "version": "1.0.0",
   "description": "Lets you control your mouse cursor with a joystick",
   "main": "main.js",
@@ -21,22 +22,18 @@
   },
   "build": {
     "appId": "com.joystickmousecontrol.app",
+    "icon": "src/img/icon.png",
     "productName": "Joystick Mouse Control",
     "win": {
+      "icon": "src/img/icon.png",
       "target": [
         {
           "target": "nsis",
-          "arch": [
-            "x64",
-            "ia32"
-          ]
+          "arch": "x64"
         },
         {
           "target": "portable",
-          "arch": [
-            "x64",
-            "ia32"
-          ]
+          "arch": "x64"
         }
       ]
     }

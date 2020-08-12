@@ -1,14 +1,16 @@
 // Modules
 const electron = require('electron');
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, Tray } = require('electron');
 
+app.allowRendererProcessReuse = true;
 // Electron START
 function createWindow () {
     // Create the browser window.
     const win = new BrowserWindow({
         width: 500,
-        height: 600,
+        height: 500,
         autoHideMenuBar: true,
+        resizable: false,
         webPreferences: {
             nodeIntegration: true
         }
@@ -19,7 +21,20 @@ function createWindow () {
     win.webContents.openDevTools();
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(createWindow).then(() => {
+    let tray = null;
+    tray = new Tray('src/img/icon.ico')
+    const contextMenu = Menu.buildFromTemplate([
+    { label: 'Item1', type: 'radio' },
+    { label: 'Item2', type: 'radio' },
+    { label: 'Item3', type: 'radio', checked: true },
+    { label: 'Item4', type: 'radio' }
+    ])
+    tray.setToolTip(app.name + " " + app.getVersion())
+    tray.setContextMenu(contextMenu)
+}).catch((err) => {
+    console.log("Unable to create tray" + err)
+});
 // Electron END
 
 console.log("Looking for connected controllers...");
