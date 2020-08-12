@@ -16,6 +16,11 @@ function createWindow () {
         }
     });
     
+    win.on('close', event=>{
+        event.preventDefault(); //this prevents it from closing. The `closed` event will not fire now
+        win.hide();
+    })
+
     // and load the index.html of the app.
     win.loadFile('index.html');
     win.webContents.openDevTools();
@@ -41,10 +46,13 @@ app.whenReady().then(createWindow).then(() => {
     tray = new Tray('src/img/icon.ico')
     const contextMenu = Menu.buildFromTemplate([
         { label: 'Controller Settings', type: 'normal' },
-        { label: 'Exit', type: 'normal' }
+        { label: 'Exit', type: 'normal', click() { app.exit() } }
     ])
     tray.setToolTip(app.name + " " + app.getVersion())
     tray.setContextMenu(contextMenu)
+    // tray.addListener("double-click", () => {
+    //     win.show();
+    // })
 }).catch((err) => {
     console.log("Unable to create tray" + err)
 });
@@ -59,3 +67,4 @@ ipcMain.on("clientMsg", (e, string) => {
 ipcMain.on("openSettings", (e) => {
     settingsWin.show();
 });
+

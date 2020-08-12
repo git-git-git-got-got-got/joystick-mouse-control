@@ -1,8 +1,10 @@
 // Modules
 const { ipcRenderer, ipcMain } = require("electron");
 const robot = require("robotjs");
-const appLoopIntervalDuration = 60;
+const appLoopIntervalDuration = 16;
 let numActiveGamepads = 0;
+let buttonTimeoutActive;
+let scrollPos = [0, 0];
 var gamepadAPI = {
     controller: {},
     turbo: false,
@@ -21,7 +23,6 @@ window.addEventListener("DOMContentLoaded", () => {
         console.log("hello world")
     });
 });
-
 
 // Event listeners
 window.addEventListener("gamepadconnected", function(e) {
@@ -50,7 +51,7 @@ window.addEventListener("gamepaddisconnected", (e) => {
 
 function updateControllerInfo(controllerName, controllerIndex, controllerButtons, controllerAxes, connnectionStatus) {
     connnectionStatus ? numActiveGamepads++:numActiveGamepads--
-    let appLogic = setInterval(logicLoop, 500);
+    let appLogic = setInterval(logicLoop, appLoopIntervalDuration);
     switch(numActiveGamepads) {
         case 0:
             for (let i = 0; i < numActiveGamepads; i++) {
@@ -77,8 +78,34 @@ function convertControllerName(gpName) {
 
 function logicLoop() {
     var mouse = robot.getMousePos();
-    if (navigator.getGamepads()["0"].axes[0] >= 0.5) {
-        robot.moveMouseSmooth(mouse.x, mouse.y - 10);
+    let X = navigator.getGamepads()["0"].axes[0];
+    let Y = navigator.getGamepads()["0"].axes[1];
+    let X1 = navigator.getGamepads()["0"].axes[2]; // -Left to right
+    let Y1 = navigator.getGamepads()["0"].axes[3]; // Up to -down
+    console.log(X1, Y1, X, Y)
+    // Left joystick
+    if (X >= 0.5 || Y >= 0.5) {
+        robot.moveMouse(mouse.x + (X * 10), mouse.y + (Y * 10));
+    }
+    if (X <= -0.5 || Y <= -0.5) {
+        robot.moveMouse(mouse.x - -(X * 10), mouse.y - -(Y * 10));
+    }
+
+    // Right joystick
+    if (Y1 >= 0.5) {
+        console.log("shit")
+        robot.scrollMouse(10, 50);
+    }
+
+    // Buttons
+    if (navigator.getGamepads()["0"].buttons[0].pressed && !buttonTimeoutActive) {
+        buttonTimeoutActive = true;
+        robot.mouseClick();
+        let timer = setInterval(() => {
+            clearInterval(timer);
+            buttonTimeoutActive = false;
+        }, 1000);
+
     }
 }
 
