@@ -1,10 +1,7 @@
-window.addEventListener("DOMContentLoaded", () => {
-    controllerList = document.getElementById("controllerList")
-    main = document.getElementsByTagName("main")[0];
-})
 // Modules
 const { ipcRenderer, ipcMain } = require("electron");
 // const robot = require("robotjs");
+
 let numActiveGamepads = 0;
 let $gp = {
     gp1: {
@@ -21,8 +18,14 @@ let $gp = {
     }
 }
 
+window.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("openSettings").addEventListener("click", (e) => {
+        console.log("hello world")
+    });
+});
 
-// Events
+
+// Event listeners
 window.addEventListener("gamepadconnected", function(e) {
     numActiveGamepads++;
     let controllerList = document.getElementById("controllerList");
@@ -43,12 +46,13 @@ window.addEventListener("gamepadconnected", function(e) {
 });
 
 window.addEventListener("gamepaddisconnected", (e) => {
-    numActiveGamepads--;
     document.getElementById("currentControllerCount").innerText = numActiveGamepads + gpCountString;
     tellServer("Gamepad disconnected");
+    updateControllerInfo(null, null, null, false)
 });
 
-function updateControllerInfo(controllerName, controllerButtons, controllerAxes) {
+function updateControllerInfo(controllerName, controllerButtons, controllerAxes, connnectionStatus) {
+    connnectionStatus ? numActiveGamepads++:numActiveGamepads--
     switch(numActiveGamepads) {
         case 0:
             for (let i = 0; i < numActiveGamepads; i++) {
@@ -61,7 +65,6 @@ function updateControllerInfo(controllerName, controllerButtons, controllerAxes)
             document.querySelector("#gp1 .gpDisplayName").innerText = convertControllerName(controllerName);
             document.querySelector("#gp1 .gpButtonCount .buttons").innerText = controllerButtons;
             document.querySelector("#gp1 .gpButtonCount .axes").innerText = controllerAxes;
-
             document.getElementById("gp1").style.display = "block";
             break;
     }
