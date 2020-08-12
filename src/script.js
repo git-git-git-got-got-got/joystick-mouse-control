@@ -1,22 +1,20 @@
 // Modules
 const { ipcRenderer, ipcMain } = require("electron");
-// const robot = require("robotjs");
-
+const robot = require("robotjs");
+const appLoopIntervalDuration = 60;
 let numActiveGamepads = 0;
-let $gp = {
-    gp1: {
-        name: "Foobar"
-    },
-    gp2: {
-        name: "Foobar"
-    },
-    gp3: {
-        name: "Foobar"
-    },
-    gp4: {
-        name: "Foobar"
-    }
-}
+var gamepadAPI = {
+    controller: {},
+    turbo: false,
+    connect: function() {},
+    disconnect: function() {},
+    update: function() {},
+    buttonPressed: function() {},
+    buttons: [],
+    buttonsCache: [],
+    buttonsStatus: [],
+    axesStatus: []
+  };
 
 window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("openSettings").addEventListener("click", (e) => {
@@ -39,10 +37,9 @@ window.addEventListener("gamepadconnected", function(e) {
     }
     document.getElementById("currentControllerCount").innerText = numActiveGamepads + gpCountString;
     document.getElementById("gamepad_directions").remove();
-    // console.log(main, controllerList, controllerInfo)
     tellServer(`Gamepad connected at index ${e.gamepad.index}: ${e.gamepad.id}. ${e.gamepad.buttons.length} buttons, ${e.gamepad.axes.length} axes.`)
     console.log(`Gamepad connected at index gp${e.gamepad.index}: ${e.gamepad.id}. ${e.gamepad.buttons.length} buttons, ${e.gamepad.axes.length} axes.`)
-    updateControllerInfo(e.gamepad.id, e.gamepad.buttons.length, e.gamepad.axes.length);
+    updateControllerInfo(e.gamepad.id, e.gamepad.index, e.gamepad.buttons.length, e.gamepad.axes.length);
 });
 
 window.addEventListener("gamepaddisconnected", (e) => {
@@ -51,8 +48,9 @@ window.addEventListener("gamepaddisconnected", (e) => {
     updateControllerInfo(null, null, null, false)
 });
 
-function updateControllerInfo(controllerName, controllerButtons, controllerAxes, connnectionStatus) {
+function updateControllerInfo(controllerName, controllerIndex, controllerButtons, controllerAxes, connnectionStatus) {
     connnectionStatus ? numActiveGamepads++:numActiveGamepads--
+    let appLogic = setInterval(logicLoop, 500);
     switch(numActiveGamepads) {
         case 0:
             for (let i = 0; i < numActiveGamepads; i++) {
@@ -60,12 +58,6 @@ function updateControllerInfo(controllerName, controllerButtons, controllerAxes,
             }
             break;
         case 1:
-            $gp.gp1.name = convertControllerName(controllerName);
-            console.log($gp)
-            document.querySelector("#gp1 .gpDisplayName").innerText = convertControllerName(controllerName);
-            document.querySelector("#gp1 .gpButtonCount .buttons").innerText = controllerButtons;
-            document.querySelector("#gp1 .gpButtonCount .axes").innerText = controllerAxes;
-            document.getElementById("gp1").style.display = "block";
             break;
     }
 }
@@ -82,3 +74,11 @@ function convertControllerName(gpName) {
             break;
     }
 }
+
+function logicLoop() {
+    var mouse = robot.getMousePos();
+    if (navigator.getGamepads()["0"].axes[0] >= 0.5) {
+        robot.moveMouseSmooth(mouse.x, mouse.y - 10);
+    }
+}
+

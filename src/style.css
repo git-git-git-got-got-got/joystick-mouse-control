@@ -21,7 +21,7 @@ header {
 
 #main_menu_controls {
     display: flex;
-    align-self: flex-end;
+    /* align-self: flex-end; */
     width: 100%;
 }
 

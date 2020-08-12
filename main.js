@@ -2,7 +2,7 @@
 const electron = require('electron');
 const { app, BrowserWindow, ipcMain, Menu, Tray } = require('electron');
 
-app.allowRendererProcessReuse = true;
+app.allowRendererProcessReuse = false;
 // Electron START
 function createWindow () {
     // Create the browser window.
@@ -40,10 +40,8 @@ app.whenReady().then(createWindow).then(() => {
     let tray = null;
     tray = new Tray('src/img/icon.ico')
     const contextMenu = Menu.buildFromTemplate([
-    { label: 'Item1', type: 'radio' },
-    { label: 'Item2', type: 'radio' },
-    { label: 'Item3', type: 'radio', checked: true },
-    { label: 'Item4', type: 'radio' }
+        { label: 'Controller Settings', type: 'normal' },
+        { label: 'Exit', type: 'normal' }
     ])
     tray.setToolTip(app.name + " " + app.getVersion())
     tray.setContextMenu(contextMenu)
@@ -59,5 +57,5 @@ ipcMain.on("clientMsg", (e, string) => {
 });
 
 ipcMain.on("openSettings", (e) => {
-    settingsWin.show()
+    settingsWin.show();
 });
